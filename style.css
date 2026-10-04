@@ -167,6 +167,12 @@ body {
   padding: 6px;
 }
 
+.canvas-wrap canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 /* Mascot Box */
 .mascot-avatar-wrap {
   cursor: pointer;
@@ -337,19 +343,25 @@ body {
   box-shadow: var(--shadow-soft), 0 0 0 4px #ffffff;
   background: var(--board-bg);
   overflow: hidden;
+  aspect-ratio: 1 / 2;
   width: 300px;
-  height: 600px;
+  max-width: 100%;
+  height: auto;
 }
 
 #tetrisCanvas {
   display: block;
   background: #fffbfe;
+  width: 100%;
+  height: 100%;
 }
 
 #effectCanvas {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
   z-index: 10;
 }
@@ -729,20 +741,378 @@ body {
   }
 }
 
+/* =========================================================================
+   Mobile Viewport Responsive Engine (iPhone, Galaxy, iPad)
+   Ensures Board and Controls fit 100% within dynamic viewport without scrolling
+   ========================================================================= */
 @media (max-width: 768px) {
-  .game-container {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .side-panel {
-    flex-direction: row;
-    width: 320px;
-    justify-content: space-between;
+  html, body {
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-overflow-scrolling: none;
   }
 
-  .left-panel .mascot-box {
+  body {
+    align-items: flex-start;
+  }
+
+  .main-wrapper {
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    width: 100%;
+    max-width: 100%;
+    padding: 4px 6px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  /* Compact Mobile Header */
+  .game-header {
+    margin-bottom: 2px;
+    flex-shrink: 0;
+  }
+
+  .title-container h1 {
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+  }
+
+  .sparkle-icon {
+    font-size: 1.05rem;
+  }
+
+  .subtitle {
     display: none;
+  }
+
+  /* Game Arena: side-by-side row so board is flanked by slim panels */
+  .game-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    flex: 1;
+    min-height: 0; /* allows shrinking without overflowing screen */
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Left Panel: Slim Column */
+  .side-panel.left-panel {
+    width: 66px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .side-panel .panel-box {
+    width: 100%;
+    padding: 4px 2px;
+    border-radius: 12px;
+    border-width: 2px;
+    margin-bottom: 0;
+    box-shadow: 0 3px 8px rgba(255, 165, 185, 0.2);
+  }
+
+  .side-panel .box-title {
+    font-size: 0.58rem;
+    margin-bottom: 2px;
+    letter-spacing: 0;
+  }
+
+  .hold-box .canvas-wrap {
+    width: 48px;
+    height: 48px;
+    padding: 2px;
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+
+  .mascot-box {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    padding: 3px 2px;
+  }
+
+  .mascot-avatar-wrap {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    margin: 0 auto 2px;
+  }
+
+  .mascot-svg-wrap {
+    width: 34px;
+    height: 34px;
+  }
+
+  .character-badge {
+    font-size: 0.52rem;
+    padding: 1px 4px;
+    border-radius: 8px;
+  }
+
+  .mascot-speech {
+    display: none; /* Hide balloon on mobile to save vertical space */
+  }
+
+  .change-char-btn {
+    font-size: 0.58rem;
+    padding: 2px 4px;
+    border-radius: 10px;
+    margin-top: 1px;
+  }
+
+  .audio-box {
+    padding: 3px 2px;
+  }
+
+  .audio-box .box-title {
+    display: none;
+  }
+
+  .audio-box .btn-group {
+    gap: 2px;
+  }
+
+  .audio-box .icon-toggle-btn {
+    padding: 3px 2px;
+    font-size: 0.55rem;
+    border-radius: 6px;
+  }
+
+  .theme-box {
+    padding: 3px 2px;
+  }
+
+  .theme-box .box-title {
+    display: none;
+  }
+
+  .theme-select {
+    padding: 2px;
+    font-size: 0.58rem;
+    border-radius: 8px;
+  }
+
+  /* Center Board Section: Perfectly Scaled to Fit Above Controls */
+  .board-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 0;
+    flex: 1;
+  }
+
+  .board-frame {
+    aspect-ratio: 1 / 2;
+    height: 100%;
+    max-height: min(44vh, 340px);
+    width: auto;
+    border-width: 3px;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(255, 120, 160, 0.25);
+  }
+
+  /* Right Panel: Slim Column */
+  .side-panel.right-panel {
+    width: 66px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .next-box .canvas-wrap {
+    width: 48px;
+    height: 105px;
+    padding: 2px;
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+
+  .stats-box {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 3px 2px;
+  }
+
+  .stat-item {
+    padding: 2px 3px;
+    border-radius: 8px;
+    border-width: 1.5px;
+    margin-bottom: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .stat-label {
+    font-size: 0.52rem;
+    display: block;
+    line-height: 1.1;
+  }
+
+  .stat-value {
+    font-size: 0.8rem;
+    display: block;
+    line-height: 1.2;
+  }
+
+  /* Mobile Keypad: Docked Directly Under the Board */
+  .roblox-controls {
+    display: flex !important;
+    width: 100%;
+    max-width: 420px;
+    margin-top: 2px;
+    padding: 2px 6px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    touch-action: none;
+  }
+
+  /* Left Thumbstick / D-Pad */
+  .joystick-base {
+    width: 110px;
+    height: 110px;
+  }
+
+  .joystick-ring {
+    width: 64px;
+    height: 64px;
+  }
+
+  .joystick-nub {
+    width: 46px;
+    height: 46px;
+    font-size: 1.15rem;
+  }
+
+  .joy-dir-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .joystick-label {
+    font-size: 0.58rem;
+    margin-top: 1px;
+  }
+
+  /* Right Thumb Action Cluster */
+  .rbx-actions-cluster {
+    width: 144px;
+    height: 110px;
+  }
+
+  .rbx-rotate {
+    width: 60px;
+    height: 60px;
+    right: 2px;
+    bottom: 6px;
+  }
+
+  .rbx-rotate .btn-ico {
+    font-size: 1.3rem;
+  }
+
+  .rbx-rotate .btn-lbl {
+    font-size: 0.55rem;
+  }
+
+  .rbx-drop {
+    width: 46px;
+    height: 46px;
+    left: 10px;
+    bottom: 4px;
+  }
+
+  .rbx-drop .btn-ico {
+    font-size: 1.05rem;
+  }
+
+  .rbx-drop .btn-lbl {
+    font-size: 0.5rem;
+  }
+
+  .rbx-hold {
+    width: 42px;
+    height: 42px;
+    left: 32px;
+    top: 2px;
+  }
+
+  .rbx-hold .btn-ico {
+    font-size: 0.9rem;
+  }
+
+  .rbx-hold .btn-lbl {
+    font-size: 0.48rem;
+  }
+
+  .game-footer {
+    display: none;
+  }
+}
+
+/* Mobile Landscape Orientation (Console Mode) */
+@media (max-height: 500px) and (orientation: landscape) {
+  html, body {
+    overflow: hidden;
+  }
+
+  .main-wrapper {
+    height: 100dvh;
+    padding: 2px 8px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .game-header {
+    display: none;
+  }
+
+  .board-frame {
+    height: 94vh;
+    max-height: 94vh;
+    width: auto;
+  }
+
+  .roblox-controls {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 10px 16px;
+    pointer-events: none;
+  }
+
+  .rbx-left-zone, .rbx-right-zone {
+    pointer-events: auto;
   }
 
   .game-footer {
