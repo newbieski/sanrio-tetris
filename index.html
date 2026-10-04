@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Sanrio Pastel Tetris ✨ 산리오 테트리스</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Floating background decorations -->
+  <div class="bg-decorations" id="bgDecorations"></div>
+
+  <div class="main-wrapper">
+    <!-- Header -->
+    <header class="game-header">
+      <div class="title-container">
+        <span class="sparkle-icon">🎀</span>
+        <h1>산리오 테트리스</h1>
+        <span class="sparkle-icon">⭐</span>
+      </div>
+      <p class="subtitle">Pastel Dream with Sanrio Friends</p>
+    </header>
+
+    <!-- Main Game Arena -->
+    <div class="game-container">
+      <!-- Left Panel: Hold & Character Select -->
+      <aside class="side-panel left-panel">
+        <div class="panel-box hold-box">
+          <div class="box-title">HOLD (C)</div>
+          <div class="canvas-wrap">
+            <canvas id="holdCanvas" width="100" height="100"></canvas>
+          </div>
+        </div>
+
+        <!-- Mascot Companion Card -->
+        <div class="panel-box mascot-box">
+          <div class="box-title">MY FRIEND 💕</div>
+          <div class="mascot-avatar-wrap" id="mascotWrapper" title="클릭해서 친구를 바꿔보세요!">
+            <div id="mascotSvgContainer" class="mascot-svg-wrap"></div>
+            <div class="character-badge" id="mascotName">폼폼푸린</div>
+          </div>
+          <div class="mascot-speech" id="mascotSpeech">
+            "안녕! 같이 신나게 블록 쌓아보자~ 🍮"
+          </div>
+          <button class="small-btn change-char-btn" id="changeCharBtn">친구 변경 🔄</button>
+        </div>
+
+        <!-- Sound & Music Controls -->
+        <div class="panel-box audio-box">
+          <div class="box-title">CONTROLS 🎵</div>
+          <div class="btn-group">
+            <button class="icon-toggle-btn active" id="sfxToggleBtn" title="효과음 켜기/끄기">🔊 SFX</button>
+            <button class="icon-toggle-btn active" id="bgmToggleBtn" title="배경음악 켜기/끄기">🎶 BGM</button>
+            <button class="icon-toggle-btn active" id="padToggleBtn" title="아이패드/터치패드 켜기/끄기">🎮 PAD</button>
+          </div>
+        </div>
+
+        <!-- Theme Selector -->
+        <div class="panel-box theme-box">
+          <div class="box-title">THEME 🎨</div>
+          <select id="themeSelect" class="theme-select">
+            <option value="sanrio">🎀 산리오 드림</option>
+            <option value="snoopy" selected>🐾 스누키 & 피너츠</option>
+            <option value="kuromi">💜 쿠로미 고딕</option>
+            <option value="purin">🍮 폼폼푸린 푸딩</option>
+            <option value="cinnamoroll">☁️ 시나모롤 클라우드</option>
+          </select>
+        </div>
+      </aside>
+
+      <!-- Center: Tetris Board -->
+      <main class="board-section">
+        <div class="board-frame">
+          <canvas id="tetrisCanvas" width="300" height="600"></canvas>
+          
+          <!-- Particle overlay canvas for sparkles & confetti -->
+          <canvas id="effectCanvas" width="300" height="600"></canvas>
+
+          <!-- In-game Overlays -->
+          <div id="startOverlay" class="game-overlay">
+            <div class="overlay-card">
+              <div class="overlay-icon">🎀</div>
+              <h2>산리오 테트리스</h2>
+              <p>파스텔 세상에서 귀여운 블록을 맞춰봐요!</p>
+              <button class="play-btn" id="startBtn">게임 시작 ▶</button>
+            </div>
+          </div>
+
+          <div id="pauseOverlay" class="game-overlay hidden">
+            <div class="overlay-card">
+              <div class="overlay-icon">⏸️</div>
+              <h2>일시 정지</h2>
+              <p>잠시 쉬어가는 중이에요 🌸</p>
+              <button class="play-btn" id="resumeBtn">계속하기 ▶</button>
+            </div>
+          </div>
+
+          <div id="gameOverOverlay" class="game-overlay hidden">
+            <div class="overlay-card">
+              <div class="overlay-icon">🥺</div>
+              <h2>GAME OVER</h2>
+              <p id="finalScoreText">최종 점수: 0점</p>
+              <button class="play-btn" id="restartBtn">다시 도전 🔄</button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Panel: Next Piece, Score, Level -->
+      <aside class="side-panel right-panel">
+        <div class="panel-box next-box">
+          <div class="box-title">NEXT</div>
+          <div class="canvas-wrap">
+            <canvas id="nextCanvas" width="100" height="240"></canvas>
+          </div>
+        </div>
+
+        <div class="panel-box stats-box">
+          <div class="stat-item">
+            <span class="stat-label">SCORE 🌟</span>
+            <span class="stat-value" id="scoreVal">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">HIGH SCORE 👑</span>
+            <span class="stat-value" id="highScoreVal">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">LEVEL 🍭</span>
+            <span class="stat-value" id="levelVal">1</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">LINES 🍰</span>
+            <span class="stat-value" id="linesVal">0</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Roblox Style Mobile & iPad Controls -->
+    <div class="roblox-controls active" id="touchControls">
+      <!-- Left: Roblox Style Virtual Thumbstick / D-Pad -->
+      <div class="rbx-left-zone">
+        <div class="joystick-container" id="joyContainer">
+          <div class="joystick-base" id="joyBase">
+            <div class="joystick-ring"></div>
+            <div class="joystick-nub" id="joyNub">🐾</div>
+            <button class="joy-dir-btn joy-left" id="touchLeft" aria-label="Left">◀</button>
+            <button class="joy-dir-btn joy-right" id="touchRight" aria-label="Right">▶</button>
+            <button class="joy-dir-btn joy-down" id="touchDown" aria-label="Soft Drop">▼</button>
+          </div>
+          <div class="joystick-label">MOVE / DROP</div>
+        </div>
+      </div>
+
+      <!-- Right: Roblox Style Circular Action Buttons Cluster -->
+      <div class="rbx-right-zone">
+        <div class="rbx-actions-cluster">
+          <button class="rbx-action-btn rbx-hold" id="touchHold" aria-label="Hold Piece">
+            <span class="btn-ico">🔄</span>
+            <span class="btn-lbl">HOLD</span>
+          </button>
+          <button class="rbx-action-btn rbx-drop" id="touchDrop" aria-label="Hard Drop">
+            <span class="btn-ico">⚡</span>
+            <span class="btn-lbl">DROP</span>
+          </button>
+          <button class="rbx-action-btn rbx-rotate" id="touchRotate" aria-label="Rotate Piece">
+            <span class="btn-ico">↻</span>
+            <span class="btn-lbl">ROTATE</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard Controls Guide Footer -->
+    <footer class="game-footer">
+      <div class="guide-chips">
+        <span class="chip">← / → : 이동</span>
+        <span class="chip">↑ / X : 시계방향 회전</span>
+        <span class="chip">Z : 반시계 회전</span>
+        <span class="chip">↓ : 소프트 드롭</span>
+        <span class="chip">SPACE : 하드 드롭</span>
+        <span class="chip">C : 홀드(HOLD)</span>
+        <span class="chip">P : 일시정지</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
