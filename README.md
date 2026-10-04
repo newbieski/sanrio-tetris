@@ -52,3 +52,10 @@
   1. GitHub 저장소 > `Settings` > `Pages`
   2. **Source**: `Deploy from a branch` 선택
   3. **Branch**: `main` / `/(root)` 선택 후 **Save**
+
+---
+
+## 📚 상세 기술 설계 문서 (Architecture & Design)
+
+게임의 전체 아키텍처, SRS 월킥 물리 알고리즘, 절차적 Web Audio 신디사이저, 인라인 벡터 SVG 렌더링, 모바일 반응형 뷰포트 설계에 관한 상세 기술 문서는 아래 경로에서 확인하실 수 있습니다:
+👉 [docs/architecture_and_design.md](docs/architecture_and_design.md)
